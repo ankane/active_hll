@@ -1,0 +1,36 @@
+name: build
+on: [push, pull_request]
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ruby: 3.2
+            gemfile: Gemfile
+          - ruby: 3.1
+            gemfile: Gemfile
+          - ruby: "3.0"
+            gemfile: gemfiles/activerecord61.gemfile
+          - ruby: 2.7
+            gemfile: gemfiles/activerecord60.gemfile
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - uses: ankane/setup-postgres@v1
+        with:
+          database: active_hll_test
+          dev-files: true
+      - run: |
+          cd /tmp
+          curl -L https://github.com/citusdata/postgresql-hll/archive/refs/tags/v2.17.tar.gz | tar xz
+          cd postgresql-hll-2.17
+          make
+          sudo make install
+      - run: bundle exec rake test
