@@ -8,7 +8,7 @@ For fast, approximate count-distinct queries
 
 ## Installation
 
-First, install the [hll extension](https://github.com/citusdata/postgresql-hll) on your database server:
+First, install the [`postgresql-hll` extension](https://github.com/citusdata/postgresql-hll) on your database server:
 
 ```sh
 cd /tmp
@@ -132,7 +132,9 @@ There’s not a way to remove data from an HLL, so to delete data for a specific
 
 ## Hosted Postgres
 
-The `hll` extension is available on Amazon RDS, Google Cloud SQL, and DigitalOcean Managed Databases.
+The `postgresql-hll` extension is available on Amazon RDS, Google Cloud SQL, DigitalOcean, [Google AlloyDB](https://cloud.google.com/alloydb/docs/reference/extensions), and [YugabyteDB](https://docs.yugabyte.com/preview/explore/ysql-language-features/pg-extensions/).
+
+[Supabase](https://supabase.com/docs/guides/database/extensions) and [Neon](https://neon.tech/docs/reference/pg-extensions/) do not currently support it.
 
 ## History
 
