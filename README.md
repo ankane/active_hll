@@ -132,7 +132,7 @@ There’s not a way to remove data from an HLL, so to delete data for a specific
 
 ## Hosted Postgres
 
-The `hll` extension is available on Amazon RDS, Google Cloud SQL, and DigitalOcean Managed Databases.
+The `hll` extension is available on a number of [hosted providers](https://github.com/ankane/active_hll/issues/4).
 
 ## History
 
