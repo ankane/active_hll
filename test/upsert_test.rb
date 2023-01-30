@@ -41,11 +41,9 @@ class UpsertTest < Minitest::Test
     end
   end
 
+  # ideally would raise NoMethodError
+  # but has same behavior as upsert/upsert_all methods
   def test_relation
-    skip "todo: fix"
-
-    assert_raises(NoMethodError) do
-      EventRollup.all.hll_upsert({})
-    end
+    assert EventRollup.all.hll_upsert({time_bucket: Date.current, visitor_ids: ["hello", "world"]})
   end
 end
