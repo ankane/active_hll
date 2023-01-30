@@ -50,6 +50,36 @@ module ActiveHll
 
         update_all(set_clauses.join(", "))
       end
+
+      # experimental
+      def hll_upsert(attributes)
+        hll_columns, other_columns = attributes.keys.partition { |a| columns_hash[a.to_s]&.type == :hll }
+
+        # important! raise if column detection fails
+        if hll_columns.empty?
+          raise ArgumentError, "No hll columns"
+        end
+
+        quoted_table = connection.quote_table_name(table_name)
+
+        quoted_hll_columns = hll_columns.map { |k| connection.quote_column_name(k) }
+        quoted_other_columns = other_columns.map { |k| connection.quote_column_name(k) }
+        quoted_columns = quoted_other_columns + quoted_hll_columns
+
+        hll_values =
+          hll_columns.map do |k|
+            vs = attributes[k]
+            vs = [vs] unless vs.is_a?(Array)
+            vs.map { |v| Utils.hll_hash_sql(self, v) }.join(" || ")
+          end
+        other_values = other_columns.map { |k| connection.quote(attributes[k]) }
+
+        insert_values = other_values + hll_values.map { |v| "hll_empty()#{v.size > 0 ? " || #{v}" : ""}" }
+        update_values = quoted_hll_columns.zip(hll_values).map { |k, v| "#{k} = COALESCE(#{quoted_table}.#{k}, hll_empty())#{v.size > 0 ? " || #{v}" : ""}" }
+
+        sql = "INSERT INTO #{quoted_table} (#{quoted_columns.join(", ")}) VALUES (#{insert_values.join(", ")}) ON CONFLICT (#{quoted_other_columns.join(", ")}) DO UPDATE SET #{update_values.join(", ")}"
+        connection.exec_insert(sql, "#{name} Upsert")
+      end
     end
 
     # doesn't update in-memory record attribute for performance

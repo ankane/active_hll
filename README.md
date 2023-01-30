@@ -53,7 +53,7 @@ You can use [batch](#batch) and [stream](#stream) approaches to build HLLs
 
 ### Batch
 
-Use the `hll_agg` method to generate HLLs from existing data
+To generate HLLs from existing data, use the `hll_agg` method
 
 ```ruby
 hlls = Event.group_by_day(:created_at).hll_agg(:visitor_id)
@@ -74,10 +74,16 @@ For a large number of HLLs, use SQL to generate and upsert in a single statement
 
 ### Stream
 
-Use the `hll_add` method to add new data to HLLs
+To add new data to HLLs, use the `hll_add` method
 
 ```ruby
 EventRollup.where(time_bucket: Date.current).hll_add(visitor_ids: ["visitor1", "visitor2"])
+```
+
+or the `hll_upsert` method [unreleased, experimental]
+
+```ruby
+EventRollup.hll_upsert({time_bucket: Date.current, visitor_ids: ["visitor1", "visitor2"]})
 ```
 
 ## Querying
