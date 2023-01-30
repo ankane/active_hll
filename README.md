@@ -80,7 +80,7 @@ To add new data to HLLs, use the `hll_add` method
 EventRollup.where(time_bucket: Date.current).hll_add(visitor_ids: ["visitor1", "visitor2"])
 ```
 
-or the `hll_upsert` method [unreleased, experimental]
+or the `hll_upsert` method (experimental)
 
 ```ruby
 EventRollup.hll_upsert({time_bucket: Date.current, visitor_ids: ["visitor1", "visitor2"]})

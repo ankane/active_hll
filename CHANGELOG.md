@@ -1,4 +1,4 @@
-## 0.1.1 (unreleased)
+## 0.1.1 (2023-01-29)
 
 - Added experimental `hll_upsert` method
 
