@@ -12,8 +12,8 @@ First, install the [hll extension](https://github.com/citusdata/postgresql-hll) 
 
 ```sh
 cd /tmp
-curl -L https://github.com/citusdata/postgresql-hll/archive/refs/tags/v2.17.tar.gz | tar xz
-cd postgresql-hll-2.17
+curl -L https://github.com/citusdata/postgresql-hll/archive/refs/tags/v2.18.tar.gz | tar xz
+cd postgresql-hll-2.18
 make
 make install # may need sudo
 ```
