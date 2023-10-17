@@ -39,7 +39,7 @@ HLLs provide an approximate count of unique values (like unique visitors). By ro
 Create a table with an `hll` column
 
 ```ruby
-class CreateEventRollups < ActiveRecord::Migration[7.0]
+class CreateEventRollups < ActiveRecord::Migration[7.1]
   def change
     create_table :event_rollups do |t|
       t.date :time_bucket, index: {unique: true}
