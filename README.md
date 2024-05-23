@@ -4,7 +4,7 @@
 
 For fast, approximate count-distinct queries
 
-[![Build Status](https://github.com/ankane/active_hll/workflows/build/badge.svg?branch=master)](https://github.com/ankane/active_hll/actions)
+[![Build Status](https://github.com/ankane/active_hll/actions/workflows/build.yml/badge.svg)](https://github.com/ankane/active_hll/actions)
 
 ## Installation
 
