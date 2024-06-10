@@ -8,6 +8,10 @@ logger = ActiveSupport::Logger.new(ENV["VERBOSE"] ? STDOUT : nil)
 ActiveRecord::Schema.verbose = false unless ENV["VERBOSE"]
 ActiveRecord::Base.logger = logger
 
+if ActiveRecord::VERSION::STRING.to_f >= 7.2
+  ActiveRecord::Base.attributes_for_inspect = :all
+end
+
 ActiveRecord::Base.establish_connection adapter: "postgresql", database: "active_hll_test"
 
 ActiveRecord::Schema.define do
