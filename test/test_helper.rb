@@ -10,6 +10,7 @@ ActiveRecord::Base.logger = logger
 
 if ActiveRecord::VERSION::STRING.to_f >= 7.2
   ActiveRecord::Base.attributes_for_inspect = :all
+  ActiveSupport.to_time_preserves_timezone = true
 end
 
 ActiveRecord::Base.establish_connection adapter: "postgresql", database: "active_hll_test"
