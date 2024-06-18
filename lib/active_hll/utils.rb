@@ -46,7 +46,7 @@ module ActiveHll
         # matches table.column and column
         unless column.is_a?(Symbol) || column.is_a?(Arel::Nodes::SqlLiteral)
           column = column.to_s
-          unless /\A\w+(\.\w+)?\z/i.match(column)
+          unless /\A\w+(\.\w+)?\z/i.match?(column)
             raise ActiveRecord::UnknownAttributeReference, "Query method called with non-attribute argument(s): #{column.inspect}. Use Arel.sql() for known-safe values."
           end
         end
