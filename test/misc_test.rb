@@ -52,4 +52,15 @@ class MiscTest < Minitest::Test
     assert_equal true, likely_members[today - 1]
     assert_equal false, likely_members[today]
   end
+
+  def test_connection_leasing
+    ActiveRecord::Base.connection_handler.clear_active_connections!
+    assert_nil ActiveRecord::Base.connection_pool.active_connection?
+    ActiveRecord::Base.connection_pool.with_connection do
+      Event.group_by_day(:created_at).hll_agg(:visitor_id)
+      EventRollup.hll_generate([1, 2, 3])
+      EventRollup.hll_count(:visitor_ids)
+    end
+    assert_nil ActiveRecord::Base.connection_pool.active_connection?
+  end
 end

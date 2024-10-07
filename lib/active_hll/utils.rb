@@ -1,7 +1,7 @@
 module ActiveHll
   module Utils
     class << self
-      def hll_hash_sql(klass, value)
+      def hll_hash_sql(connection, value)
         hash_function =
           case value
           when true, false
@@ -13,34 +13,40 @@ module ActiveHll
           else
             raise ArgumentError, "Unexpected type: #{value.class.name}"
           end
-        quoted_value = klass.connection.quote(value)
+        quoted_value = connection.quote(value)
         "#{hash_function}(#{quoted_value})"
       end
 
-      def hll_calculate(relation, operation, column, default_value:)
-        sql, relation, group_values = hll_calculate_sql(relation, operation, column)
-        result = relation.connection.select_all(sql)
-
-        # typecast
-        rows = []
-        columns = result.columns
-        result.rows.each do |untyped_row|
-          rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].deserialize(untyped_row[i]) : untyped_row[i] })
-        end
-
-        result =
-          if group_values.any?
-            Hash[rows.map { |r| [r.size == 2 ? r[0] : r[0..-2], r[-1]] }]
-          else
-            rows[0] && rows[0][0]
-          end
-
-        result = Groupdate.process_result(relation, result, default_value: default_value) if defined?(Groupdate.process_result)
-
-        result
+      def with_connection(relation, &block)
+        relation.connection_pool.with_connection(&block)
       end
 
-      def hll_calculate_sql(relation, operation, column)
+      def hll_calculate(relation, operation, column, default_value:)
+        Utils.with_connection(relation) do |connection|
+          sql, relation, group_values = hll_calculate_sql(relation, connection, operation, column)
+          result = connection.select_all(sql)
+
+          # typecast
+          rows = []
+          columns = result.columns
+          result.rows.each do |untyped_row|
+            rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].deserialize(untyped_row[i]) : untyped_row[i] })
+          end
+
+          result =
+            if group_values.any?
+              Hash[rows.map { |r| [r.size == 2 ? r[0] : r[0..-2], r[-1]] }]
+            else
+              rows[0] && rows[0][0]
+            end
+
+          result = Groupdate.process_result(relation, result, default_value: default_value) if defined?(Groupdate.process_result)
+
+          result
+        end
+      end
+
+      def hll_calculate_sql(relation, connection, operation, column)
         # basic version of Active Record disallow_raw_sql!
         # symbol = column (safe), Arel node = SQL (safe), other = untrusted
         # matches table.column and column
@@ -54,7 +60,7 @@ module ActiveHll
         # column resolution
         node = relation.all.send(:arel_columns, [column]).first
         node = Arel::Nodes::SqlLiteral.new(node) if node.is_a?(String)
-        column = relation.connection.visitor.accept(node, Arel::Collectors::SQLString.new).value
+        column = connection.visitor.accept(node, Arel::Collectors::SQLString.new).value
 
         group_values = relation.all.group_values
 
