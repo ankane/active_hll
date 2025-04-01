@@ -1,3 +1,7 @@
+## 0.3.0 (unreleased)
+
+- Dropped support for Ruby < 3.2 and Active Record < 7.1
+
 ## 0.2.1 (2024-10-07)
 
 - Fixed connection leasing for Active Record 7.2+

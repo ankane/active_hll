@@ -33,9 +33,5 @@ ActiveSupport.on_load(:active_record) do
   ActiveRecord::ConnectionAdapters::TableDefinition.send(:define_column_methods, :hll)
 
   # prevent unknown OID warning
-  if ActiveRecord::VERSION::MAJOR >= 7
-    ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.singleton_class.prepend(ActiveHll::RegisterType)
-  else
-    ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.prepend(ActiveHll::RegisterType)
-  end
+  ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.singleton_class.prepend(ActiveHll::RegisterType)
 end
