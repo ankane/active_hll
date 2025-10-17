@@ -29,8 +29,8 @@ jobs:
           dev-files: true
       - run: |
           cd /tmp
-          curl -L https://github.com/citusdata/postgresql-hll/archive/refs/tags/v2.18.tar.gz | tar xz
-          cd postgresql-hll-2.18
+          curl -L https://github.com/citusdata/postgresql-hll/archive/refs/tags/v2.19.tar.gz | tar xz
+          cd postgresql-hll-2.19
           make
           sudo make install
       - run: bundle exec rake test
