@@ -3,7 +3,7 @@ require_relative "test_helper"
 class MiscTest < Minitest::Test
   def test_schema
     file = Tempfile.new
-    connection = ActiveRecord::VERSION::STRING.to_f >= 7.2 ? ActiveRecord::Base.connection_pool : ActiveRecord::Base.connection
+    connection = ActiveRecord::Base.connection_pool
     ActiveRecord::SchemaDumper.dump(connection, file)
     file.rewind
     schema = file.read

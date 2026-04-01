@@ -7,9 +7,7 @@ logger = ActiveSupport::Logger.new(ENV["VERBOSE"] ? STDOUT : nil)
 ActiveRecord::Schema.verbose = false unless ENV["VERBOSE"]
 ActiveRecord::Base.logger = logger
 
-if ActiveRecord::VERSION::STRING.to_f >= 7.2
-  ActiveRecord::Base.attributes_for_inspect = :all
-end
+ActiveRecord::Base.attributes_for_inspect = :all
 
 if ActiveRecord::VERSION::STRING.to_f == 8.0
   ActiveSupport.to_time_preserves_timezone = :zone
