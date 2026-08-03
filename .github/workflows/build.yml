@@ -16,7 +16,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -27,8 +27,8 @@ jobs:
           dev-files: true
       - run: |
           cd /tmp
-          curl -L https://github.com/citusdata/postgresql-hll/archive/refs/tags/v2.20.tar.gz | tar xz
-          cd postgresql-hll-2.20
+          curl -L https://github.com/citusdata/postgresql-hll/archive/refs/tags/v2.21.tar.gz | tar xz
+          cd postgresql-hll-2.21
           make
           sudo make install
       - run: bundle exec rake test
